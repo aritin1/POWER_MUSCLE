@@ -2,12 +2,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from apps.workouts.models import Author, Workout
 from apps.workouts.serializers import WorkoutSerializer, AuthorSerializer, WorkoutCreateSerializer
+from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 class WorkoutListView(generics.ListAPIView):
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     filterset_fields = ['author', 'quantity', 'title']
 
 class DetailView(generics.RetrieveAPIView):
@@ -23,3 +24,5 @@ class AuthorCreateView(generics.CreateAPIView):
 class WorkoutCreateView(generics.CreateAPIView):
     queryset = Workout.objects.all()
     serializer_class = WorkoutCreateSerializer
+
+
