@@ -1,7 +1,10 @@
-from django.urls import path
-from .views import ExerciseStatListCreateView, ExerciseStatDetailView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ExerciseStatViewSet
+
+router = DefaultRouter()
+router.register(r'stats', ExerciseStatViewSet, basename='exercise-stat')
 
 urlpatterns = [
-    path('', ExerciseStatListCreateView.as_view(), name='stat_list_create'),
-    path('<int:pk>/', ExerciseStatDetailView.as_view(), name='stat_detail'),
+    path('', include(router.urls)),
 ]

@@ -1,10 +1,9 @@
-from rest_framework import generics, permissions
+from rest_framework import viewsets, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import ExerciseStat
 from .serializers import ExerciseStatSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 
-class ExerciseStatListCreateView(generics.ListCreateAPIView):
+class ExerciseStatViewSet(viewsets.ModelViewSet):
     serializer_class = ExerciseStatSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -16,11 +15,3 @@ class ExerciseStatListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-
-class ExerciseStatDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ExerciseStatSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return ExerciseStat.objects.filter(user=self.request.user)
