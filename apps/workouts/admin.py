@@ -1,7 +1,10 @@
 from django.contrib import admin
+from .models import WorkoutProgram
 
-# Register your models here.
-from .models import Workout, Author
+class WorkoutProgramAdmin(admin.ModelAdmin):
+    list_display = ('title', 'level', 'user', 'created_at')
+    search_fields = ('title', 'description')
+    list_filter = ('level', 'user', 'created_at')
+    ordering = ('-created_at',)
 
-admin.site.register(Workout)
-admin.site.register(Author)
+admin.site.register(WorkoutProgram, WorkoutProgramAdmin)

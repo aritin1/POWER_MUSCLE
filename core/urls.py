@@ -16,15 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('redoc', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
-    path('api/', include('apps.workouts.urls')),
+    path('api/workouts', include('apps.workouts.urls')),
+    path('api/users', include('apps.users.urls')),
+    path('api/exercises/', include('apps.exercises.urls')),
+    path('api/stats/', include('apps.stats.urls')),
+    path('api/goals/', include('apps.goals.urls')),
+    path('api/generator/', include('apps.generator.urls')),
 ]

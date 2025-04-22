@@ -1,28 +1,26 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics
-from apps.workouts.models import Author, Workout
-from apps.workouts.serializers import WorkoutSerializer, AuthorSerializer, WorkoutCreateSerializer
-from rest_framework.filters import SearchFilter
+from rest_framework import generics, permissions
+from .models import WorkoutProgram
+from .serializers import WorkoutProgramSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-class WorkoutListView(generics.ListAPIView):
-    queryset = Workout.objects.all()
-    serializer_class = WorkoutSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [SearchFilter, DjangoFilterBackend]
-    filterset_fields = ['author', 'quantity', 'title']
+from rest_framework import filters
 
-class DetailView(generics.RetrieveAPIView):
-    queryset = Workout.objects.all()
-    serializer_class = WorkoutSerializer
+class WorkoutProgramListCreateView(generics.ListCreateAPIView):
+    serializer_class = WorkoutProgramSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['level']
+    search_fields = ['title', 'description']
+    ordering_fields = ['created_at', 'title']
 
-
-class AuthorCreateView(generics.CreateAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
+    def get_queryset(self):
+        return WorkoutProgram.objects.filter(user=self.request.user)
 
 
-class WorkoutCreateView(generics.CreateAPIView):
-    queryset = Workout.objects.all()
-    serializer_class = WorkoutCreateSerializer
+class WorkoutProgramDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WorkoutProgram.objects.all()
+    serializer_class = WorkoutProgramSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-
+    def get_queryset(self):
+        # Ограничим доступ только к своим программам
+        return self.queryset.filter(user=self.request.user)
